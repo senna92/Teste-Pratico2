@@ -1,0 +1,97 @@
+{
+	"info": {
+		"_postman_id": "4c9c175a-6553-4c86-baed-fe93935054fd",
+		"name": "Teste Prático 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15291153"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Define o CEP a ser consultado.\r",
+							"const cep = pm.environment.get(\"cep\");\r",
+							"\r",
+							"\r",
+							"// Define o XML do corpo da requisição SOAP para a operação \"consultaCEP\".\r",
+							"const xmlBody = `\r",
+							"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cli=\"http://cliente.bean.master.sigep.bsb.correios.com.br/\">\r",
+							"   <soapenv:Header/>\r",
+							"   <soapenv:Body>\r",
+							"      <cli:consultaCEP>\r",
+							"         <cep>${cep}</cep>\r",
+							"      </cli:consultaCEP>\r",
+							"   </soapenv:Body>\r",
+							"</soapenv:Envelope>`;\r",
+							"\r",
+							"pm.request.body.raw = xmlBody;\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Campos não são vazios\", function () {\r",
+							"    var response = pm.response.text();\r",
+							"    var regexBairro = /<bairro>(.*)<\\/bairro>/;\r",
+							"    var regexCidade = /<cidade>(.*)<\\/cidade>/;\r",
+							"    var regexEnd = /<end>(.*)<\\/end>/;\r",
+							"    var regexUf = /<uf>(.*)<\\/uf>/;\r",
+							"\r",
+							"    pm.expect(regexBairro.exec(response)[1]).to.not.be.empty;\r",
+							"    pm.expect(regexCidade.exec(response)[1]).to.not.be.empty;\r",
+							"    pm.expect(regexEnd.exec(response)[1]).to.not.be.empty;\r",
+							"    pm.expect(regexUf.exec(response)[1]).to.not.be.empty;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "text/xml",
+						"type": "text"
+					},
+					{
+						"key": "SOAPAction",
+						"value": "http://cliente.bean.master.sigep.bsb.correios.com.br/AtendeCliente/consultaCEP",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://apps.correios.com.br/SigepMasterJPA/AtendeClienteService/AtendeCliente",
+					"protocol": "https",
+					"host": [
+						"apps",
+						"correios",
+						"com",
+						"br"
+					],
+					"path": [
+						"SigepMasterJPA",
+						"AtendeClienteService",
+						"AtendeCliente"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
